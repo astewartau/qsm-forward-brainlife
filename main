@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#SBATCH --job-name=template
+#SBATCH --ntasks-per-node=4
+#SBATCH --mem=16G
+#SBATCH --time=01:00:00
+
+echo "[INFO] Installing qsm-forward"
+pip install qsm-forward==0.21
+
+echo "[INFO] Starting main.py..."
+python main.py
+
