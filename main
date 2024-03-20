@@ -5,15 +5,12 @@
 #SBATCH --mem=16G
 #SBATCH --time=01:00:00
 
-echo "[INFO] Checking python version..."
-python3 --version
-
-echo "[INFO] Updating pip..."
-python3 -m pip install --upgrade pip
+echo "[INFO] Pulling Python v3.8 container..."
+singularity pull docker://python:3.8-bookworm
 
 echo "[INFO] Installing qsm-forward"
-python3 -m pip install qsm-forward==0.21
+singularity exec python_3.8-bookworm.sif pip install --user qsm-forward==0.21
 
 echo "[INFO] Starting main.py..."
-python3 main.py
+singularity exec python_3.8-bookworm.sif python3 main.py
 
