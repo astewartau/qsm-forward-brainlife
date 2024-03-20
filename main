@@ -6,7 +6,7 @@
 #SBATCH --time=01:00:00
 
 echo "[INFO] Installing qsm-forward"
-pip install qsm-forward==0.21
+python3 -m pip install qsm-forward==0.21
 
 echo "[INFO] Starting main.py..."
 python3 main.py
