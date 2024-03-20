@@ -5,6 +5,9 @@
 #SBATCH --mem=16G
 #SBATCH --time=01:00:00
 
+echo "[INFO] Updating pip..."
+python3 -m pip install --upgrade pip
+
 echo "[INFO] Installing qsm-forward"
 python3 -m pip install qsm-forward==0.21
 
