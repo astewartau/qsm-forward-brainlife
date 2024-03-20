@@ -3,6 +3,9 @@
 print("[INFO] Importing modules...")
 import qsm_forward
 import json
+import shutil
+import glob
+import os
 
 print("[INFO] Loading configuration...")
 with open('config.json') as config_json_file_handle:
@@ -22,5 +25,12 @@ tissue_params = qsm_forward.TissueParams(
 )
 
 print("[INFO] Generating BIDS dataset...")
-qsm_forward.generate_bids(tissue_params, recon_params, "out_dir")
+qsm_forward.generate_bids(tissue_params, recon_params, "bids")
+
+print("[INFO] Moving outputs to out_dir...")
+os.makedirs("out_dir", exist_ok=True)
+shutil.move(glob.glob("bids/sub-1/anat/*echo-1*mag*nii")[0], "out_dir/mag.nii")
+shutil.move(glob.glob("bids/sub-1/anat/*echo-1*phase*nii")[0], "out_dir/phase.nii")
+shutil.move(glob.glob("bids/sub-1/anat/*echo-1*mag*json")[0], "out_dir/mag.json")
+shutil.move(glob.glob("bids/sub-1/anat/*echo-1*phase*json")[0], "out_dir/phase.json")
 
