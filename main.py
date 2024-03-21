@@ -27,10 +27,14 @@ tissue_params = qsm_forward.TissueParams(
 print("[INFO] Generating BIDS dataset...")
 qsm_forward.generate_bids(tissue_params, recon_params, "bids")
 
-print("[INFO] Moving outputs to out_dir...")
-os.makedirs("out_dir", exist_ok=True)
-shutil.move(glob.glob("bids/sub-1/anat/*echo-1*mag*nii")[0], "out_dir/mag.nii")
-shutil.move(glob.glob("bids/sub-1/anat/*echo-1*phase*nii")[0], "out_dir/phase.nii")
-shutil.move(glob.glob("bids/sub-1/anat/*echo-1*mag*json")[0], "out_dir/mag.json")
-shutil.move(glob.glob("bids/sub-1/anat/*echo-1*phase*json")[0], "out_dir/phase.json")
+print("[INFO] Moving outputs to magphase/...")
+os.makedirs("magphase", exist_ok=True)
+shutil.move(glob.glob("bids/sub-1/anat/*echo-1*mag*nii")[0], "magphase/mag.nii")
+shutil.move(glob.glob("bids/sub-1/anat/*echo-1*phase*nii")[0], "magphase/phase.nii")
+shutil.move(glob.glob("bids/sub-1/anat/*echo-1*mag*json")[0], "magphase/mag.json")
+shutil.move(glob.glob("bids/sub-1/anat/*echo-1*phase*json")[0], "magphase/phase.json")
+
+print("[INFO] Moving ground truth to chimap/...")
+os.makedirs("chimap", exist_ok=True)
+shutil.move("bids/derivatives/qsm-forward/sub-1/anat/sub-1_Chimap.nii", "chimap/qsm.nii")
 
