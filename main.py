@@ -17,7 +17,7 @@ with open('config.json') as config_json_file_handle:
 print("[INFO] Preparing reconstruction parameters...")
 recon_params = qsm_forward.ReconParams(
 	TR=config_json['TR'],
-	TEs=np.array([float(x) for x in str(config_json['TEs']).split(",")]),
+	TEs=np.array([config_json['TE']]),
 	flip_angle=config_json['flip-angle'],
     B0=config_json['B0'],
 	B0_dir=np.array([config_json['B0-dir-0'], config_json['B0-dir-1'], config_json['B0-dir-2']]),
@@ -38,44 +38,29 @@ tissue_params = qsm_forward.TissueParams(
 print("[INFO] Generating BIDS dataset...")
 qsm_forward.generate_bids(tissue_params, recon_params, "bids")
 
-print("[INFO] Moving outputs to magphase/...")
-os.makedirs("magphase", exist_ok=True)
+print("[INFO] Moving outputs...")
+os.makedirs("t2starw-mag", exist_ok=True)
+os.makedirs("t2starw-phase", exist_ok=True)
 
 # Get a list of all echo image paths
-mag_image_paths = sorted(glob.glob("bids/sub-1/anat/*echo-*mag*nii"))
-phase_image_paths = sorted(glob.glob("bids/sub-1/anat/*echo-*phase*nii"))
+mag_images = glob.glob("bids/sub-1/anat/*echo-*mag*nii")
+phase_images = glob.glob("bids/sub-1/anat/*echo-*phase*nii")
+mag_jsons = glob.glob("bids/sub-1/anat/*echo-*mag*json")
+phase_jsons = glob.glob("bids/sub-1/anat/*echo-*phase*json")
 
-# Concatenate the images along the 4th dimension
-concat_mag = nib.concat_images(mag_image_paths)
-concat_phase = nib.concat_images(phase_image_paths)
-
-print(concat_mag.get_fdata().shape)
-print(concat_mag.shape)
+if len(mag_images) > 0: raise RuntimeError(f"One magnitude file expected! Found {len(mag_images)} ({mag_images})")
+if len(phase_images) > 0: raise RuntimeError(f"One magnitude file expected! Found {len(phase_images)} ({phase_images})")
+if len(mag_jsons) > 0: raise RuntimeError(f"One magnitude file expected! Found {len(mag_jsons)} ({mag_jsons})")
+if len(phase_jsons) > 0: raise RuntimeError(f"One magnitude file expected! Found {len(phase_jsons)} ({phase_jsons})")
 
 # Save the new images to a temporary location
-nib.save(concat_mag, "magphase/mag.nii")
-nib.save(concat_phase, "magphase/phase.nii")
-
-def combine_json_files(in_paths, out_path):
-    combined_data = {"echoes": []}
-
-    for file_path in in_paths:
-        # Open and load the JSON data from each file
-        with open(file_path, 'r') as json_file:
-            data = json.load(json_file)
-            # Append the data to the 'echoes' list
-            combined_data["echoes"].append(data)
-
-    with open(out_path, 'w') as json_file:
-        json_file.write(json.dumps(combined_data))
-
-mag_json_files = sorted(glob.glob("bids/sub-1/anat/*mag*.json"))
-phase_json_files = sorted(glob.glob("bids/sub-1/anat/*phase*.json"))
-
-combine_json_files(mag_json_files, "magphase/mag.json")
-combine_json_files(phase_json_files, "magphase/phase.json")
+nib.save(mag_images[0], "t2starw-mag/t2starw.nii")
+nib.save(phase_images[0], "t2starw-phase/t2starw.nii")
+nib.save(mag_jsons[0], "t2starw-phase/t2starw.json")
+nib.save(phase_jsons[0], "t2starw-phase/t2starw.json")
 
 print("[INFO] Moving ground truth to chimap/...")
 os.makedirs("chimap", exist_ok=True)
 shutil.move("bids/derivatives/qsm-forward/sub-1/anat/sub-1_Chimap.nii", "chimap/qsm.nii")
+nib.save(phase_jsons[0], "chimap/qsm.json")
 
