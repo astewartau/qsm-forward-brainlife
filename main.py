@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 
 print("[INFO] Importing modules...")
-
 import qsm_forward
 import json
 import shutil
 import glob
 import os
 import numpy as np
-import nibabel as nib
 
 print("[INFO] Loading configuration...")
 with open('config.json') as config_json_file_handle:
@@ -38,11 +36,10 @@ tissue_params = qsm_forward.TissueParams(
 print("[INFO] Generating BIDS dataset...")
 qsm_forward.generate_bids(tissue_params, recon_params, "bids")
 
-print("[INFO] Moving outputs...")
+print("[INFO] Collecting outputs...")
 os.makedirs("t2starw-mag", exist_ok=True)
 os.makedirs("t2starw-phase", exist_ok=True)
 
-# Get a list of all echo image paths
 mag_images = glob.glob("bids/sub-1/anat/*mag*nii")
 phs_images = glob.glob("bids/sub-1/anat/*phase*nii")
 mag_jsons = glob.glob("bids/sub-1/anat/*mag*json")
@@ -53,14 +50,12 @@ if len(phs_images) != 1: raise RuntimeError(f"One phase file expected! Found {le
 if len(mag_jsons) != 1: raise RuntimeError(f"One magnitude sidecar expected! Found {len(mag_jsons)} ({mag_jsons})")
 if len(phs_jsons) != 1: raise RuntimeError(f"One phase sidecar expected! Found {len(phs_jsons)} ({phs_jsons})")
 
-# Save the new images to a temporary location
-nib.save(mag_images[0], "t2starw-mag/t2starw.nii")
-nib.save(phs_images[0], "t2starw-phase/t2starw.nii")
-nib.save(mag_jsons[0], "t2starw-phase/t2starw.json")
-nib.save(phs_jsons[0], "t2starw-phase/t2starw.json")
+shutil.copy2(mag_images[0], "t2starw-mag/t2starw.nii")
+shutil.copy2(phs_images[0], "t2starw-phase/t2starw.nii")
+shutil.copy2(mag_jsons[0], "t2starw-phase/t2starw.json")
+shutil.copy2(phs_jsons[0], "t2starw-phase/t2starw.json")
 
-print("[INFO] Moving ground truth to chimap/...")
 os.makedirs("chimap", exist_ok=True)
-shutil.move("bids/derivatives/qsm-forward/sub-1/anat/sub-1_Chimap.nii", "chimap/qsm.nii")
-nib.save(phs_jsons[0], "chimap/qsm.json")
+shutil.copy2("bids/derivatives/qsm-forward/sub-1/anat/sub-1_Chimap.nii", "chimap/qsm.nii")
+shutil.copy2(phs_jsons[0], "chimap/qsm.json")
 
