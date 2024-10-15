@@ -52,7 +52,7 @@ if len(phs_jsons) != 1: raise RuntimeError(f"One phase sidecar expected! Found {
 
 shutil.copy2(mag_images[0], "t2starw-mag/t2starw.nii")
 shutil.copy2(phs_images[0], "t2starw-phase/t2starw.nii")
-shutil.copy2(mag_jsons[0], "t2starw-phase/t2starw.json")
+shutil.copy2(mag_jsons[0], "t2starw-mag/t2starw.json")
 shutil.copy2(phs_jsons[0], "t2starw-phase/t2starw.json")
 
 os.makedirs("chimap", exist_ok=True)
