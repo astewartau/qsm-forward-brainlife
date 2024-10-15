@@ -43,24 +43,24 @@ os.makedirs("t2starw-mag", exist_ok=True)
 os.makedirs("t2starw-phase", exist_ok=True)
 
 # Get a list of all echo image paths
-mag_images = glob.glob("bids/sub-1/anat/*echo-*mag*nii")
-phase_images = glob.glob("bids/sub-1/anat/*echo-*phase*nii")
-mag_jsons = glob.glob("bids/sub-1/anat/*echo-*mag*json")
-phase_jsons = glob.glob("bids/sub-1/anat/*echo-*phase*json")
+mag_images = glob.glob("bids/sub-1/anat/*mag*nii")
+phs_images = glob.glob("bids/sub-1/anat/*phase*nii")
+mag_jsons = glob.glob("bids/sub-1/anat/*mag*json")
+phs_jsons = glob.glob("bids/sub-1/anat/*phase*json")
 
-if len(mag_images) > 0: raise RuntimeError(f"One magnitude file expected! Found {len(mag_images)} ({mag_images})")
-if len(phase_images) > 0: raise RuntimeError(f"One magnitude file expected! Found {len(phase_images)} ({phase_images})")
-if len(mag_jsons) > 0: raise RuntimeError(f"One magnitude file expected! Found {len(mag_jsons)} ({mag_jsons})")
-if len(phase_jsons) > 0: raise RuntimeError(f"One magnitude file expected! Found {len(phase_jsons)} ({phase_jsons})")
+if len(mag_images) != 1: raise RuntimeError(f"One magnitude file expected! Found {len(mag_images)} ({mag_images})")
+if len(phs_images) != 1: raise RuntimeError(f"One phase file expected! Found {len(phs_images)} ({phs_images})")
+if len(mag_jsons) != 1: raise RuntimeError(f"One magnitude sidecar expected! Found {len(mag_jsons)} ({mag_jsons})")
+if len(phs_jsons) != 1: raise RuntimeError(f"One phase sidecar expected! Found {len(phs_jsons)} ({phs_jsons})")
 
 # Save the new images to a temporary location
 nib.save(mag_images[0], "t2starw-mag/t2starw.nii")
-nib.save(phase_images[0], "t2starw-phase/t2starw.nii")
+nib.save(phs_images[0], "t2starw-phase/t2starw.nii")
 nib.save(mag_jsons[0], "t2starw-phase/t2starw.json")
-nib.save(phase_jsons[0], "t2starw-phase/t2starw.json")
+nib.save(phs_jsons[0], "t2starw-phase/t2starw.json")
 
 print("[INFO] Moving ground truth to chimap/...")
 os.makedirs("chimap", exist_ok=True)
 shutil.move("bids/derivatives/qsm-forward/sub-1/anat/sub-1_Chimap.nii", "chimap/qsm.nii")
-nib.save(phase_jsons[0], "chimap/qsm.json")
+nib.save(phs_jsons[0], "chimap/qsm.json")
 
