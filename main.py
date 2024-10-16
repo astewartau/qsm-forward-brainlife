@@ -14,7 +14,7 @@ with open('config.json') as config_json_file_handle:
 	config_json = json.load(config_json_file_handle)
 
 print("[INFO] Preparing reconstruction parameters...")
-subject = config_json['Subject']
+subject = config_json['subject']
 recon_params = qsm_forward.ReconParams(
 	subject=subject,
 	TR=config_json['TR'],
