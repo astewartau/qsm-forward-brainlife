@@ -66,5 +66,5 @@ os.makedirs("mask", exist_ok=True)
 shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_Chimap.nii", "chimap/qsm.nii")
 shutil.copy2(phs_jsons[0], "chimap/qsm.json")
 shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_dseg.nii", "segmentation/parc.nii")
-shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_mask.nii", "segmentation/mask.nii")
+shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_mask.nii", "mask/mask.nii")
 
