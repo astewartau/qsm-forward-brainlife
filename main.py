@@ -34,7 +34,7 @@ tissue_params = qsm_forward.TissueParams(
         small_cylinder_radii=[4, 4, 4, 7],
         small_cylinder_vals=[0.05, 0.1, 0.2, 0.5],
     ),
-	voxel_size=np.array([config_json['voxel-size-0'], config_json['voxel-size-1', config_json['voxel-size-2']]])
+	voxel_size=np.array([config_json['voxel-size-0'], config_json['voxel-size-1'], config_json['voxel-size-2']])
 )
 
 print("[INFO] Generating BIDS dataset...")
