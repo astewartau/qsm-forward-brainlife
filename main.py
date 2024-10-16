@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 print("[INFO] Importing modules...")
+
 import qsm_forward
 import json
 import shutil
@@ -13,7 +14,9 @@ with open('config.json') as config_json_file_handle:
 	config_json = json.load(config_json_file_handle)
 
 print("[INFO] Preparing reconstruction parameters...")
+subject = config_json['Subject']
 recon_params = qsm_forward.ReconParams(
+	subject=subject,
 	TR=config_json['TR'],
 	TEs=np.array([config_json['TE']]),
 	flip_angle=config_json['flip-angle'],
@@ -29,8 +32,9 @@ tissue_params = qsm_forward.TissueParams(
         background=0,
         large_cylinder_val=0.005,
         small_cylinder_radii=[4, 4, 4, 7],
-        small_cylinder_vals=[0.05, 0.1, 0.2, 0.5]
-    )
+        small_cylinder_vals=[0.05, 0.1, 0.2, 0.5],
+    ),
+	voxel_size=np.array([config_json['voxel-size-0'], config_json['voxel-size-1', config_json['voxel-size-2']]])
 )
 
 print("[INFO] Generating BIDS dataset...")
@@ -40,10 +44,10 @@ print("[INFO] Collecting outputs...")
 os.makedirs("t2starw-mag", exist_ok=True)
 os.makedirs("t2starw-phase", exist_ok=True)
 
-mag_images = glob.glob("bids/sub-1/anat/*mag*nii")
-phs_images = glob.glob("bids/sub-1/anat/*phase*nii")
-mag_jsons = glob.glob("bids/sub-1/anat/*mag*json")
-phs_jsons = glob.glob("bids/sub-1/anat/*phase*json")
+mag_images = sorted(glob.glob(f"bids/sub-{subject}/anat/*mag*nii"))
+phs_images = sorted(glob.glob(f"bids/sub-{subject}/anat/*phase*nii"))
+mag_jsons = sorted(glob.glob(f"bids/sub-{subject}/anat/*mag*json"))
+phs_jsons = sorted(glob.glob(f"bids/sub-{subject}/anat/*phase*json"))
 
 if len(mag_images) != 1: raise RuntimeError(f"One magnitude file expected! Found {len(mag_images)} ({mag_images})")
 if len(phs_images) != 1: raise RuntimeError(f"One phase file expected! Found {len(phs_images)} ({phs_images})")
@@ -56,6 +60,11 @@ shutil.copy2(mag_jsons[0], "t2starw-mag/t2starw.json")
 shutil.copy2(phs_jsons[0], "t2starw-phase/t2starw.json")
 
 os.makedirs("chimap", exist_ok=True)
-shutil.copy2("bids/derivatives/qsm-forward/sub-1/anat/sub-1_Chimap.nii", "chimap/qsm.nii")
+os.makedirs("segmentation", exist_ok=True)
+os.makedirs("mask", exist_ok=True)
+
+shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_Chimap.nii", "chimap/qsm.nii")
 shutil.copy2(phs_jsons[0], "chimap/qsm.json")
+shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_dseg.nii", "segmentation/parc.nii")
+shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_mask.nii", "segmentation/mask.nii")
 
