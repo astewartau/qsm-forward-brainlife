@@ -57,19 +57,32 @@ if len(phs_jsons) != 1: raise RuntimeError(f"One phase sidecar expected! Found {
 
 shutil.copy2(mag_images[0], "t2starw-mag/t2starw.nii")
 shutil.copy2(phs_images[0], "t2starw-phase/t2starw.nii")
-shutil.copy2(mag_jsons[0], "t2starw-mag/t2starw.json")
-shutil.copy2(phs_jsons[0], "t2starw-phase/t2starw.json")
+
+# Add 'Subject' and save JSONs
+with open(mag_jsons[0], 'r') as mag_json_file:
+    mag_json_data = json.load(mag_json_file)
+mag_json_data["Subject"] = subject
+with open("t2starw-mag/t2starw.json", 'w') as mag_json_file:
+    json.dump(mag_json_data, mag_json_file, indent=4)
+
+with open(phs_jsons[0], 'r') as phs_json_file:
+    phs_json_data = json.load(phs_json_file)
+phs_json_data["Subject"] = subject
+with open("t2starw-phase/t2starw.json", 'w') as phs_json_file:
+    json.dump(phs_json_data, phs_json_file, indent=4)
 
 os.makedirs("chimap", exist_ok=True)
 os.makedirs("segmentation", exist_ok=True)
 os.makedirs("mask", exist_ok=True)
 
 shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_Chimap.nii", "chimap/qsm.nii")
-shutil.copy2(phs_jsons[0], "chimap/qsm.json")
+shutil.copy2("t2starw-phase/t2starw.json", "chimap/qsm.json")
 shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_dseg.nii", "segmentation/parc.nii")
+shutil.copy2("t2starw-mag/t2starw.json", "segmentation/parc.json")
 
 mask_file = f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_mask.nii"
 with open(mask_file, 'rb') as f_in:
     with gzip.open("mask/mask.nii.gz", 'wb') as f_out:
         shutil.copyfileobj(f_in, f_out)
+shutil.copy2("t2starw-mag/t2starw.json", "mask/mask.json")
 
