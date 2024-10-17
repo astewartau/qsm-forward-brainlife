@@ -77,7 +77,11 @@ os.makedirs("mask", exist_ok=True)
 
 shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_Chimap.nii", "chimap/qsm.nii")
 shutil.copy2("t2starw-phase/t2starw.json", "chimap/qsm.json")
-shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_dseg.nii", "segmentation/parc.nii")
+
+parc_file = f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_dseg.nii"
+with open(parc_file, 'rb') as f_in:
+    with gzip.open("segmentation/parc.nii.gz", 'wb') as f_out:
+        shutil.copyfileobj(f_in, f_out)
 shutil.copy2("t2starw-mag/t2starw.json", "segmentation/parc.json")
 
 mask_file = f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_mask.nii"

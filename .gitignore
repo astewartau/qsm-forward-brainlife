@@ -132,3 +132,5 @@ in_dir/
 work_dir/
 out_dir/
 config.json
+bids
+*.sif
