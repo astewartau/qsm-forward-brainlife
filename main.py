@@ -7,6 +7,7 @@ import json
 import shutil
 import glob
 import os
+import gzip
 import numpy as np
 
 print("[INFO] Loading configuration...")
@@ -66,5 +67,9 @@ os.makedirs("mask", exist_ok=True)
 shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_Chimap.nii", "chimap/qsm.nii")
 shutil.copy2(phs_jsons[0], "chimap/qsm.json")
 shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_dseg.nii", "segmentation/parc.nii")
-shutil.copy2(f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_mask.nii", "mask/mask.nii")
+
+mask_file = f"bids/derivatives/qsm-forward/sub-{subject}/anat/sub-{subject}_mask.nii"
+with open(mask_file, 'rb') as f_in:
+    with gzip.open("mask/mask.nii.gz", 'wb') as f_out:
+        shutil.copyfileobj(f_in, f_out)
 
