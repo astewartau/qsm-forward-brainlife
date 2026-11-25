@@ -2,6 +2,55 @@
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.444-blue.svg)](https://doi.org/10.25663/bl.app.444)
 
 # app-template-python
+
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+> **Simulates T2*-weighted magnitude and phase images and a ground-truth susceptibility map from a synthetic cylinder phantom with qsm-forward, for testing QSM pipelines such as QSMxT.**
+
+Generates a susceptibility phantom (a large cylinder with four smaller cylinders of different susceptibility) at the chosen matrix size and voxel size, runs the qsm-forward forward model with the given TR, TE, flip angle, field strength and field direction, and exports the simulated magnitude and phase images, the ground-truth chi map, a segmentation and a mask. Use it to create test data with known ground truth for QSM methods; it takes no input data. The README is the unmodified python App template, and the code fixes the peak SNR at 100.
+
+| | |
+|---|---|
+| 📤 **Outputs** | `neuro/anat/t2starw` ×2 · `neuro/qsm` · `neuro/parcellation/volume` · `neuro/mask` |
+| 🐳 **Container** | `python:3.8-bookworm` |
+| ⚙️ **Resources** | 16 GB memory · 1 h walltime |
+| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.820](https://doi.org/10.25663/brainlife.app.820) |
+
+#### 📤 Outputs
+
+| Output | Datatype | Description |
+|---|---|---|
+| `t2starw-mag` | `neuro/anat/t2starw` | T2*-weighted magnitude images. |
+| `t2starw-phase` | `neuro/anat/t2starw` | T2*-weighted phase images. |
+| `chimap` | `neuro/qsm` | Ground truth susceptibility map (Chi or χ). |
+| `segmentation` | `neuro/parcellation/volume` | Segmentation of anatomical ROIs. |
+| `mask` | `neuro/mask` | Mask of the internal ROI. |
+
+<details>
+<summary><b>⚙️ Parameters</b> (15)</summary>
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `subject` | string | `1` | Subject identifier |
+| `resolution-0` | number | `100` | Phantom matrix size (voxels) along the first axis. |
+| `resolution-1` | number | `100` | Phantom matrix size (voxels) along the second axis. |
+| `resolution-2` | number | `100` | Phantom matrix size (voxels) along the third axis. |
+| `TR` | number | `0.05` | Repetition time passed to the qsm-forward simulation. |
+| `TE` | number | `0.004` | Echo time passed to the qsm-forward simulation (single echo). |
+| `flip-angle` | number | `15` | Flip angle passed to the qsm-forward simulation. |
+| `B0` | number | `7` | Main magnetic field strength passed to the simulation. |
+| `B0-dir-0` | number | `0` | First component of the B0 field direction vector. |
+| `B0-dir-1` | number | `0` | Second component of the B0 field direction vector. |
+| `B0-dir-2` | number | `1` | Third component of the B0 field direction vector. |
+| `voxel-size-0` | number | `1` | Voxel size along the first axis. |
+| `voxel-size-1` | number | `1` | Voxel size along the second axis. |
+| `voxel-size-2` | number | `1` | Voxel size along the third axis. |
+| `peak-snr` | number |  | Not applied: the code reads the key 'peak_snr' and then always sets the peak SNR to 100. |
+
+</details>
+
+<!-- brainlife-app:end -->
+
 This is a template showing how to develop a python-based brainlife.io/app
 
 # app-example-documentation
